@@ -1,6 +1,8 @@
 import random
 from sympy import isprime
 import base64
+import sys
+import argparse
 
 def save_public_key(filename, n, e):
     with open(filename, 'w') as file:
@@ -25,10 +27,16 @@ def load_key(filename):
         d = int(elements[1], 16)
     return n, d
 
-def generate_keys():
-    p, q = generate_prime(), generate_prime()
+def display_key(filename):
+    with open(filename, 'r') as file:
+        lines = file.readlines()
+        key = lines[1].strip()
+    return key
+
+def generate_keys(size):
+    p, q = generate_prime(size), generate_prime(size)
     while p == q:
-        q = generate_prime()
+        q = generate_prime(size)
 
     n = p * q
     n_prime = (p - 1) * (q - 1)
@@ -41,9 +49,9 @@ def generate_keys():
 
     return (n, e), (n, d)
 
-def generate_prime():
+def generate_prime(size):
     while True:
-        num = random.randint(10**9, 10**10 - 1)
+        num = random.randint(10**(size-1), 10**size - 1)
         if isprime(num):
             return num
 
@@ -58,33 +66,75 @@ def encrypt_with_public_key(message, public_key):
     return encrypted_text
 
 def decrypt_with_private_key(encrypted_text, private_key):
-    n, d = private_key
+    n , d = private_key
     encrypted_blocks = base64.b64decode(encrypted_text.encode()).decode('ascii')
     encrypted_blocks = list(map(int, encrypted_blocks.strip('[]').split(', ')))
     decrypted_blocks = [pow(block, d, n) for block in encrypted_blocks]
     decrypted_message = ''.join([chr(block) for block in decrypted_blocks])
     return decrypted_message
 
-if __name__ == "__main__":
-    public_key, private_key = generate_keys()
-    n, e = public_key
-    n, d = private_key
+class MonRSA:
+    def __init__(self):
+        self.parser = argparse.ArgumentParser(description='Script monRSA par Guilhem Schira')
+        self.parser.add_argument('commande', choices=['keygen', 'crypt', 'decrypt', 'help'], help='Commande à exécuter')
+        self.parser.add_argument('cle', nargs='?', default='default_key', help='Fichier contenant la clé publique ("crypt") ou privée ("decrypt"). Clé par défaut: default_key')
+        self.parser.add_argument('texte', nargs='?', help='Phrase à chiffrer ("crypt") ou déchiffrer ("decrypt")')
+        self.parser.add_argument('-f', '--fichier', nargs=1, default=['monRSA'],type=str, help='Noms des fichiers de clé générés (par défaut: monRSA.pub monRSA.priv)')
+        self.parser.add_argument('-s', '--size', nargs=1, default=[10], type=int, help='Tailles des clé générées (par défaut: 10)')
 
 
-    print("clé privée {}".format(public_key))
-    print("clé publique {}".format(private_key))
+    def keygen(self,fichier, size):
+        public_file = fichier[0] + ".pub"
+        private_file = fichier[0] + ".priv"
+        
+        public_key, private_key = generate_keys(size[0])
+        n, e = public_key
+        n, d = private_key
+
+        save_public_key(public_file, n, e)
+        save_private_key(private_file, n, d)
+        print(f'Génération de la paire de clé et sauvegarde dans {public_file} et {private_file}...')
+        print("clé privée : {}".format(public_file))
+        print("clé publique : {}".format(private_file))
+        print("Clés sauvegardées")
 
 
-    save_public_key('monRSA.pub', n, e)
-    save_private_key('monRSA.priv', n, d)
+    def crypt(self):
+        cle = self.parser.parse_args().cle
+        texte = self.parser.parse_args().texte
+        # Logique pour chiffrer le texte avec la clé publique spécifiée ou par défaut
+        print(f'Chiffrement du texte avec la clé {cle}...')
 
-    print("Clés générées et sauvegardées avec succès.")
+        #Modifier pour détecter
+        encrypted_text = encrypt_with_public_key(texte, load_key(cle))
+        print(f'Texte chiffré: {encrypted_text}')
 
-    message = "zone à danger"
-    public_key_file = load_key('monRSA.pub')
-    encrypted_text = encrypt_with_public_key(message, public_key_file)
-    print("Texte chiffré : {}".format(encrypted_text))
+    def decrypt(self):
+        cle = self.parser.parse_args().cle
+        texte = self.parser.parse_args().texte
+        # Logique pour déchiffrer le texte avec la clé privée spécifiée
+        print(f'Déchiffrement du texte avec la clé privée {cle}...')
+        decrypted_text = decrypt_with_private_key(texte,load_key(cle))
+        print(f'Texte déchiffré: {decrypted_text}')
 
-    private_key_file = load_key('monRSA.priv')
-    decrypted_text = decrypt_with_private_key(encrypted_text, private_key_file)
-    print("Texte déchiffré : {}".format(decrypted_text))
+    def run(self):
+        args = self.parser.parse_args()
+
+        if args.commande == 'help':
+            self.parser.print_help()
+        elif args.commande == 'keygen':
+            self.keygen(args.fichier, args.size)
+        elif args.commande == 'crypt':
+            if args.cle is None or args.texte is None:
+                print('Erreur: Les paramètres "cle" et "texte" sont obligatoires pour la commande "crypt".')
+            else:
+                self.crypt()
+        elif args.commande == 'decrypt':
+            if args.cle is None or args.texte is None:
+                print('Erreur: Les paramètres "cle" et "texte" sont obligatoires pour la commande "decrypt".')
+            else:
+                self.decrypt()
+
+if __name__ == '__main__':
+    monRSA = MonRSA()
+    monRSA.run()
