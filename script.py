@@ -94,25 +94,21 @@ class MonRSA:
         save_public_key(public_file, n, e)
         save_private_key(private_file, n, d)
         print(f'Génération de la paire de clé et sauvegarde dans {public_file} et {private_file}...')
-        print("clé privée : {}".format(public_file))
-        print("clé publique : {}".format(private_file))
+        print("Clé privée : {}".format(public_file))
+        print("Clé publique : {}".format(private_file))
         print("Clés sauvegardées")
 
 
     def crypt(self):
         cle = self.parser.parse_args().cle
         texte = self.parser.parse_args().texte
-        # Logique pour chiffrer le texte avec la clé publique spécifiée ou par défaut
         print(f'Chiffrement du texte avec la clé {cle}...')
-
-        #Modifier pour détecter
         encrypted_text = encrypt_with_public_key(texte, load_key(cle))
         print(f'Texte chiffré: {encrypted_text}')
 
     def decrypt(self):
         cle = self.parser.parse_args().cle
         texte = self.parser.parse_args().texte
-        # Logique pour déchiffrer le texte avec la clé privée spécifiée
         print(f'Déchiffrement du texte avec la clé privée {cle}...')
         decrypted_text = decrypt_with_private_key(texte,load_key(cle))
         print(f'Texte déchiffré: {decrypted_text}')
