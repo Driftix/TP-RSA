@@ -1,0 +1,5 @@
+# Ignore all files except Python and Markdown files
+*
+!*.py
+!*.md
+!*.gitignore
