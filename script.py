@@ -58,7 +58,6 @@ def generate_prime(size):
 def encrypt_with_public_key(message, public_key):
     n, e = public_key
     numeric_message = [ord(char) for char in message]
-    block_size = len(str(n)) - 1
     encrypted_blocks = []
     for char_code in numeric_message:
         encrypted_blocks.append(pow(char_code, e, n))
@@ -81,6 +80,10 @@ class MonRSA:
         self.parser.add_argument('texte', nargs='?', help='Phrase à chiffrer ("crypt") ou déchiffrer ("decrypt")')
         self.parser.add_argument('-f', '--fichier', nargs=1, default=['monRSA'],type=str, help='Noms des fichiers de clé générés (par défaut: monRSA.pub monRSA.priv)')
         self.parser.add_argument('-s', '--size', nargs=1, default=[10], type=int, help='Tailles des clé générées (par défaut: 10)')
+        self.parser.add_argument('-i', '--input', nargs=1 ,help='Accepte un fichier texte à la place d\'une chaine (path)')
+        self.parser.add_argument('-o', '--output', nargs=1 ,help='Sauvegarde le resultat de cryptage ou decryptage dans un fichier nommé (path)')
+
+
 
 
     def keygen(self,fichier, size):
@@ -99,19 +102,56 @@ class MonRSA:
         print("Clés sauvegardées")
 
 
-    def crypt(self):
-        cle = self.parser.parse_args().cle
-        texte = self.parser.parse_args().texte
+    def crypt(self, i,o ):
+        if(i):
+            #Trouver le fichier et le foutre en strign
+            try : 
+                f = open(i[0], 'r')
+                texte = f.read()
+                f.close()
+            except :
+                print("Path en entrée invalide")
+                exit()
+        else : 
+            texte = self.parser.parse_args().texte
+
+        # Pour pouvoir saisir sans donner l'extension
+        cle = self.parser.parse_args().cle + ".pub"
         print(f'Chiffrement du texte avec la clé {cle}...')
         encrypted_text = encrypt_with_public_key(texte, load_key(cle))
-        print(f'Texte chiffré: {encrypted_text}')
+        if(o):
+            f = open(o[0],'w')
+            f.write(encrypted_text)
+            f.close()
+            print("Fichier " + o[0] + " enregistré")
+        else :
+            print(f'Texte chiffré: {encrypted_text}')
 
-    def decrypt(self):
-        cle = self.parser.parse_args().cle
-        texte = self.parser.parse_args().texte
+    def decrypt(self, i, o):
+        if(i):
+            #Trouver le fichier et le foutre en strign
+            try : 
+                f = open(i[0], 'r')
+                texte = f.read()
+                f.close()
+            except :
+                print("Path en entrée invalide")
+                exit()
+        else : 
+            texte = self.parser.parse_args().texte
+
+        # Pour pouvoir saisir sans donner l'extension
+        cle = self.parser.parse_args().cle + ".priv"
         print(f'Déchiffrement du texte avec la clé privée {cle}...')
         decrypted_text = decrypt_with_private_key(texte,load_key(cle))
-        print(f'Texte déchiffré: {decrypted_text}')
+
+        if(o):
+            f = open(o[0],'w')
+            f.write(decrypted_text)
+            f.close()
+            print("Fichier " + o[0] + " enregistré")
+        else :
+            print(f'Texte chiffré: {decrypted_text}')
 
     def run(self):
         args = self.parser.parse_args()
@@ -121,15 +161,15 @@ class MonRSA:
         elif args.commande == 'keygen':
             self.keygen(args.fichier, args.size)
         elif args.commande == 'crypt':
-            if args.cle is None or args.texte is None:
+            if args.cle is None or args.texte is None and args.input is None:
                 print('Erreur: Les paramètres "cle" et "texte" sont obligatoires pour la commande "crypt".')
             else:
-                self.crypt()
+                self.crypt(args.input, args.output)
         elif args.commande == 'decrypt':
-            if args.cle is None or args.texte is None:
+            if args.cle is None or args.texte is None and args.input is None:
                 print('Erreur: Les paramètres "cle" et "texte" sont obligatoires pour la commande "decrypt".')
             else:
-                self.decrypt()
+                self.decrypt(args.input, args.output)
 
 if __name__ == '__main__':
     monRSA = MonRSA()
