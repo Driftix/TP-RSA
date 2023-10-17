@@ -7,15 +7,16 @@ pypy3 -m pip install sympy
 ```
 
 ## Documentation :
-
-```usage: script.py [-h] [-f FICHIER] [-s SIZE] [-i INPUT] [-o OUTPUT] {keygen,crypt,decrypt,help} [cle] [texte]
+*Clean est une commande ajoutée permettant d'effacter tous les .pub .priv et .txt générés*
+```usage: rsagen.py [-h] [-f FICHIER] [-s SIZE] [-i INPUT] [-o OUTPUT]
+                 {keygen,crypt,decrypt,clean,help} [cle] [texte]
 
 Script monRSA par Guilhem Schira
 
 positional arguments:
-  {keygen,crypt,decrypt,help}
+  {keygen,crypt,decrypt,clean,help}
                         Commande à exécuter
-  cle                   Fichier contenant la clé publique ("crypt") ou privée ("decrypt"). Clé par défaut: default_key
+  cle                   Fichier contenant la clé publique ("crypt") ou privée ("decrypt").
   texte                 Phrase à chiffrer ("crypt") ou déchiffrer ("decrypt")
 
 options:
