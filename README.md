@@ -1,4 +1,10 @@
-# TP-RSA
+# TP-RSA Guilhem Schira
+
+## Dépendences :
+Sympy est utilisée pour la simplification de la génération de nombre premiers (j'utilise seulement isprime)
+```
+pypy3 -m pip install sympy
+```
 
 ## Documentation :
 

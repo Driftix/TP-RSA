@@ -84,8 +84,6 @@ class MonRSA:
         self.parser.add_argument('-o', '--output', nargs=1 ,help='Sauvegarde le resultat de cryptage ou decryptage dans un fichier nommé (path)')
 
 
-
-
     def keygen(self,fichier, size):
         public_file = fichier[0] + ".pub"
         private_file = fichier[0] + ".priv"
