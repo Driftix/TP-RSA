@@ -8,7 +8,7 @@ import os
 class KeyManager:
     def __init__(self,params):
         self.params = params
- 
+
     def generate_keys(self):
         name = self.params.name
         size = self.params.size
@@ -48,7 +48,7 @@ class KeyParameters():
     def __init__(self, name, size):
         self.name = name
         self.size = size
-    
+
 class FileManager():
 
     def save_key(self, filename, fileType, key):
@@ -241,13 +241,3 @@ class Commands(CLI):
 if __name__ == '__main__':
     cli = CLI()
     cli.run()
-
-
-
-
-
-
-
-    
-
-    

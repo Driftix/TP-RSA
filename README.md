@@ -1,5 +1,5 @@
 # TP-RSA Guilhem Schira
-
+Merci d'utiliser le dossier "scriptV3" qui est la version la plus aboutie ! Le programme se lance via Rsa.py
 ## Dépendences :
 Sympy est utilisée pour la simplification de la génération de nombre premiers (j'utilise seulement isprime)
 ```
@@ -8,7 +8,7 @@ pypy3 -m pip install sympy
 
 ## Documentation :
 *Clean est une commande ajoutée permettant d'effacter tous les .pub .priv et .txt générés*
-```usage: rsagen.py [-h] [-f FICHIER] [-s SIZE] [-i INPUT] [-o OUTPUT]
+```usage: Rsa.py [-h] [-f FICHIER] [-s SIZE] [-i INPUT] [-o OUTPUT]
                  {keygen,crypt,decrypt,clean,help} [cle] [texte]
 
 Script monRSA par Guilhem Schira
@@ -36,27 +36,27 @@ options:
 ### Documentation :
 Affichage de la documentation
 ```console
-pypy3 script.py --help
+pypy3 Rsa.py --help
 ```
 
 ### Génération de clés RSA :
 Crée une clé publique et une clé privée avec un nom "nomfichier" et une taille "taille" définie
 ```console
-pypy3 script.py keygen -f nomfichier -s taille
+pypy3 Rsa.py keygen -f nomfichier -s taille
 ```
 ## Crypt et Decrypt
 *DANS CETTE VERSION IL N'Y A PLUS BESOIN DE SPECIFIER L'EXTENTION DES CLÉ (.pub,.priv)*
 ### Crypt :
 Chiffre un en entrée texte à partir d'une clée publique en entrée puis affiche le résultat en ligne de commande
 ```console
-pypy3 script.py crypt nomcle "texte à chiffrer"
+pypy3 Rsa.py crypt nomcle "texte à chiffrer"
 ```
 ### Decrypt :
 Déchiffre le texte donné en entré en utilisant la clé privée
 ```console
-pypy3 script.py decript nomcle "resultat du texte chiffré"
+pypy3 Rsa.py decript nomcle "resultat du texte chiffré"
 ```
 ### Paramètres supplémentaires:
 ```console
-pypy3 script.py crypt/decrypt nomcle -i ./pathtotext.txt -o ./outputpath.txt
+pypy3 Rsa.py crypt/decrypt nomcle -i ./pathtotext.txt -o ./outputpath.txt
 ```
